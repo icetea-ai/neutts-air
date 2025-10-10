@@ -6,3 +6,8 @@ soundfile==0.13.1
 torch==2.8.0
 transformers==4.56.1
 resemble-perth==1.0.1
+datasets~=4.1.1
+tqdm~=4.67.1
+fire~=0.7.1
+omegaconf~=2.3.0
+loguru~=0.7.2
