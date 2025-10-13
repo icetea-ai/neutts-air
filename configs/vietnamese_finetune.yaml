@@ -1,0 +1,40 @@
+# Vietnamese TTS Finetuning Configuration
+# Full dataset training on GPU server
+
+# Model Configuration
+restore_from: "neuphonic/neutts-air"  # Starting checkpoint
+save_root: "./checkpoints"
+run_name: "vietnamese-tts-full"
+
+# Data Configuration
+data_file: "data/vietnamese_encoded/vlsp2020_encoded.json"  # VLSP2020 100-hour dataset
+language: "vi"  # Vietnamese (standard). Options: 'vi', 'vi-sgn' (Saigon), 'vi-hue' (Hue)
+use_viphoneme: true  # Use Vietnamese-specific G2P (better than eSpeak)
+validation_split: 0.1  # 10% for validation
+
+# Model Settings
+max_seq_len: 2048  # Context window (can extend to 4096 later)
+
+# Training Hyperparameters
+per_device_train_batch_size: 8  # GPU can handle larger batches (adjust based on GPU memory)
+lr: 0.00003  # 3e-5, slightly lower than default
+lr_scheduler_type: "cosine"
+warmup_ratio: 0.1  # 10% warmup
+
+# Training Steps
+# For ~70,000 samples (vlsp2020 100h dataset) with batch_size=8:
+# - Steps per epoch: ~70,000 / 8 = ~8,750 steps
+# - 70,000 steps = ~8 epochs
+max_steps: 70000
+logging_steps: 500  # Log every 500 steps
+save_steps: 8750  # Save checkpoint every epoch
+eval_steps: 8750  # Evaluate every epoch
+
+# Other Settings
+seed: 42
+
+# Notes:
+# - Training time: ~1-2 hours on CPU, ~15-30 minutes on GPU
+# - Will create 4 checkpoints: 500, 1000, 1500, 2000 steps
+# - Best model selected based on validation loss
+# - Final model saved in checkpoints/vietnamese-tts-1k/

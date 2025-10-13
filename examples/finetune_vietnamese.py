@@ -207,14 +207,45 @@ def main(config_fpath: str, device: str = "auto"):
 
     # Initialize Vietnamese phonemizer
     language = config.get('language', 'vi')  # Default to standard Vietnamese
+    use_viphoneme = config.get('use_viphoneme', False)  # Use Vietnamese-specific g2p
+
     print(f"\n🗣️  Initializing Vietnamese phonemizer (language: {language})")
-    g2p = phonemizer.backend.EspeakBackend(
-        language=language,
-        preserve_punctuation=True,
-        with_stress=True,
-        words_mismatch="ignore",
-        language_switch="remove-flags"
-    )
+
+    if use_viphoneme:
+        # Use Vietnamese-specific G2P (better quality)
+        try:
+            from viphoneme import vi2IPA_split
+            print("✅ Using viphoneme (Vietnamese-specific G2P)")
+
+            class ViphonemeWrapper:
+                """Wrapper to make viphoneme compatible with phonemizer API."""
+                def phonemize(self, texts, strip=True):
+                    if isinstance(texts, str):
+                        texts = [texts]
+                    results = []
+                    for text in texts:
+                        # Convert to IPA with space-separated phonemes
+                        phones = vi2IPA_split(text, delim=' ')
+                        results.append(phones)
+                    return results
+
+            g2p = ViphonemeWrapper()
+
+        except ImportError:
+            print("⚠️  viphoneme not installed, falling back to eSpeak")
+            print("   Install with: pip install viphoneme")
+            use_viphoneme = False
+
+    if not use_viphoneme:
+        # Use eSpeak (general-purpose, works but less accurate for Vietnamese)
+        print("✅ Using eSpeak backend")
+        g2p = phonemizer.backend.EspeakBackend(
+            language=language,
+            preserve_punctuation=True,
+            with_stress=True,
+            words_mismatch="ignore",
+            language_switch="remove-flags"
+        )
 
     # Create preprocessing function
     partial_preprocess = partial(
