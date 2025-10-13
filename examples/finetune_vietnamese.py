@@ -218,7 +218,7 @@ def main(config_fpath: str, device: str = "auto"):
             results = []
             for text in texts:
                 # Convert to IPA with space-separated phonemes
-                phones = vi2IPA_split(text, delim=' ')
+                phones = vi2IPA_split(text, delimit=' ')
                 results.append(phones)
             return results
 
@@ -339,15 +339,6 @@ def main(config_fpath: str, device: str = "auto"):
     print("✅ TRAINING COMPLETE!")
     print("=" * 60)
     print(f"📁 Model saved to: {checkpoints_dir}")
-    print(f"\n📝 To use your Vietnamese model:")
-    print(f"""
-    from neuttsair.neutts import NeuTTSAir
-
-    tts = NeuTTSAir(
-        backbone_repo="{checkpoints_dir}",
-        language="{language}"
-    )
-    """)
 
 
 if __name__ == "__main__":
