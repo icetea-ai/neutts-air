@@ -9,7 +9,6 @@ run_name: "vietnamese-tts-full"
 # Data Configuration
 data_file: "data/vietnamese_encoded/vlsp2020_encoded.json"  # VLSP2020 100-hour dataset
 language: "vi"  # Vietnamese (standard). Options: 'vi', 'vi-sgn' (Saigon), 'vi-hue' (Hue)
-use_viphoneme: true  # Use Vietnamese-specific G2P (better than eSpeak)
 validation_split: 0.1  # 10% for validation
 
 # Model Settings
